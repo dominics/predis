@@ -198,3 +198,38 @@ individual Redis servers in a cluster::
        $hosts[] = $shard->info();
    }
 
+Handling Connection Errors
+==========================
+
+When you're requesting keys from a large cluster, you'll be making connections
+to quite a few Redis instances. So, it's even more likely you'll run into a bad
+connection (or a crashed Redis instance, goodness!) than if you were dealing
+with a single connection.
+
+The ``connect()`` method on a cluster Predis client will connect to all
+the underlying servers, making it a good way to test connectivity to all the
+servers in a cluster. You can, for example, do a try/catch up-front before
+returning the client instance to the rest of your application::
+
+   $client = new Predis\Client(/* ... */, array('cluster' => true));
+
+   try {
+       $client->connect();
+   } catch (Predis\CommunicationException $e) {
+       // Decide what to do... perhaps remove this connection
+       if ($connection instanceof Predis\Connection\ClusterConnectionInterface
+               && count($connection) > 1) {
+           $connection->remove($e->getConnection());
+       }
+   }
+
+As you can see, the exception will allow you to identify the offending
+connection. Then, after some deliberation, you can decide whether to remove the
+connection from the cluster and continue.
+
+This is only a simple example to illustrate that it is possible to configure
+the cluster at runtime based on connection errors. To enhance this example for
+production use, you'd want to think carefully about your criteria for removing
+a node, and the implications of doing so for cache pressure and size (as every
+configuration change will cause the keyspace to be mapped differently). You
+might also like to handle more than one failed connection at a time.
