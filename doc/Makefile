@@ -6,6 +6,10 @@ SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 PAPER         =
 BUILDDIR      = _build
+SPHPDOX       = sphpdox # assumed added to pathA
+SPHPDOXBUILD  = $(BUILDDIR)/sphpdox
+SPHPDOXDIR    = api
+SPHPDOXHEAD   = api.rst.head
 
 # Internal variables.
 PAPEROPT_a4     = -D latex_paper_size=a4
@@ -14,7 +18,7 @@ ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
 # the i18n builder cannot share the environment and doctrees with the others
 I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
 
-.PHONY: help clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest gettext
+.PHONY: api help clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest gettext
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
@@ -45,6 +49,16 @@ html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
+
+api:
+	-rm -rf $(SPHPDOXDIR)
+	-rm -rf $(SPHPDOXBUILD)
+	mkdir -p $(SPHPDOXBUILD)
+	$(SPHPDOX) process -t "Predis" -o $(SPHPDOXBUILD) Predis ../lib
+	mv -f $(SPHPDOXBUILD)/Predis $(SPHPDOXDIR)
+	cat $(SPHPDOXHEAD) > $(SPHPDOXDIR)/index.rst.new
+	tail -n +5 $(SPHPDOXDIR)/index.rst >> $(SPHPDOXDIR)/index.rst.new
+	mv $(SPHPDOXDIR)/index.rst.new $(SPHPDOXDIR)/index.rst
 
 dirhtml:
 	$(SPHINXBUILD) -b dirhtml $(ALLSPHINXOPTS) $(BUILDDIR)/dirhtml

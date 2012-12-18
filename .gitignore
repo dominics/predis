@@ -4,3 +4,4 @@ phpunit.xml
 package.xml
 experiments/
 doc/_build
+doc/api

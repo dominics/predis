@@ -1,0 +1,11 @@
+API Documentation
+-----------------
+
+Following is detailed code-level documentation generated directly from Predis
+source code. The fact a class or method is documented here should not be considered
+an indication of its stability or that it's part of a public API. Basically:
+
+.. warning::
+
+  Implementation details are exposed within!
+

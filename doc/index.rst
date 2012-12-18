@@ -13,6 +13,7 @@ Welcome to the end-user Predis documentation.
    pipelining
    clustering
    replication
+   api/index
    glossary
    license
 
